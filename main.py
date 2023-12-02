@@ -1,17 +1,19 @@
 import sqlite3
 import sys
 
-from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QDialog
 
+from add_ui import Ui_DialogAddDevice
+from main_ui import Ui_MainWindow
 
-class EditCoffee(QDialog):
+
+class EditCoffee(QDialog, Ui_DialogAddDevice):
     def __init__(self):
+        self.setupUi(self)
         super(EditCoffee, self).__init__()
-        uic.loadUi("addEditCoffeeForm.ui", self)
 
     def accept(self) -> None:
-        con = sqlite3.connect('coffee.sqlite')
+        con = sqlite3.connect('data/coffee.sqlite')
         con.cursor().execute('INSERT INTO coffee(sort, stepen, v_zernah, vkus, price, volume) VALUES (?,?,?,?,?,?)',
                              (self.SortEdit.text(),
                               self.StepenEdit.text(),
@@ -27,15 +29,15 @@ class EditCoffee(QDialog):
         self.done(0)
 
 
-class Espresso(QMainWindow):
+class Espresso(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(Espresso, self).__init__()
-        uic.loadUi("main.ui", self)
+        self.setupUi(self)
         self.load_coffee()
         self.addCoffee.clicked.connect(self.add_cofee)
 
     def load_coffee(self):
-        con = sqlite3.connect('coffee.sqlite')
+        con = sqlite3.connect('data/coffee.sqlite')
         cur = con.cursor()
         data = cur.execute(f"""SELECT sort, stepen, v_zernah, vkus, price, volume FROM coffee""").fetchall()
 
